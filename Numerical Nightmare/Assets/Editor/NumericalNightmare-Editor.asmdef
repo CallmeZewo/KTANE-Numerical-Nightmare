@@ -1,0 +1,10 @@
+{
+  "name": "NumericalNightmare-Editor",
+  "references": [
+    "NumericalNightmare"
+  ],
+  "includePlatforms": [
+    "Editor"
+  ],
+  "excludePlatforms": []
+}
