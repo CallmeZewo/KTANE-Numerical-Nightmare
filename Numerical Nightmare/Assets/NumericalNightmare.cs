@@ -52,7 +52,6 @@ public class NumericalNightmare : MonoBehaviour
     };
 
     char FirstSerialLetter;
-    string WireABCConst;
 
     static Quaternion targetQuaternionOpen = Quaternion.Euler(new Vector3(0, -105f, 0));
     static Quaternion targetQuaternionClose = Quaternion.Euler(new Vector3(0, 0f, 0));
@@ -68,6 +67,12 @@ public class NumericalNightmare : MonoBehaviour
     bool FinalInput = false;
     bool FaultyThisStage = false;
     public bool HatchOpen = false;
+    bool ABC = false;
+    bool Onetwothree = false;
+
+    bool ChipBroken = false;
+    bool DialsBroken = false;
+    bool WiresBroken = false;
 
     float Angle;
     int LastAndCurrentFaultyStage = 0;
@@ -75,15 +80,18 @@ public class NumericalNightmare : MonoBehaviour
     int LastValidAndThisStageFirstSymbolValue;
     int LastValidAndThisStageSecondSymbolValue;
 
-    string CorrectWireABC;
+    int CorrectWireABC;
     int CorrectWire123;
 
-    string LastWireABC = "A";
-    int LastWire123 = 1;
+    string LastWireABC;
+    int LastWire123;
 
     int Dial1Goal;
     int Dial2Goal;
     int Dial3Goal;
+
+    int LastInputNumber;
+    bool final = true;
 
     List<int> PinList = new List<int>();
     List<int> FinalInputList = new List<int>();
@@ -91,7 +99,7 @@ public class NumericalNightmare : MonoBehaviour
 
     //Boss mod shit
     public static string[] ignoredModules = null;
-    int SolvableModCount = 8;
+    int SolvableModCount = 20;
     public int SolvedModCount = 0;
     int Stage = 0;
     bool WaitForModCount;
@@ -193,7 +201,7 @@ public class NumericalNightmare : MonoBehaviour
         //
 
         FirstSerialLetter = Bomb.GetSerialNumberLetters().First();
-        WireABCConstCalc();
+        LastInputNumber = -2;
 
         //
         //// Setup First Stage 0
@@ -209,19 +217,21 @@ public class NumericalNightmare : MonoBehaviour
         {
             wire.SetActive(false);
         }
-        WireABC123[0].SetActive(true);
 
     }
 
     void Update()
     { //Shit that happens at any point after initialization
 
-
         if (FinalInput == true)
         {
-            for (int i = 0; i < FinalInputList.Count; i++)
+            if (final)
             {
-                Debug.Log(FinalInputList[i]);
+                for (int i = 0; i < FinalInputList.Count; i++)
+                {
+                    Debug.Log(FinalInputList[i]);
+                }
+                final = false;
             }
             if (FinalInputList.Count < 1)
             {
@@ -259,8 +269,6 @@ public class NumericalNightmare : MonoBehaviour
         }
         if (SolvedModCount > Stage)
         { //Put whatever your mod is supposed to do after a solve here. If you want a delay of solves for the purposes of TP, make it a coroutine.
-
-            //Stage is 0 indexed, so adjust what you need for your specific circumstances.
             Stage++;
             StageAdvanceHandler();
             StagesDone++;
@@ -355,31 +363,44 @@ public class NumericalNightmare : MonoBehaviour
     {
         int faultySymbolValue = SymbolDictionary.ContainsKey(FaultySymbol) ? SymbolDictionary[FaultySymbol] : 0;
         int startNumber = LastAndCurrentFaultyStage + faultySymbolValue;
-        int repeat = 0;
 
-        while(startNumber > 0 || repeat == 3)
+        for (int repeat = 0; repeat < 3; repeat++)
         {
+            if (startNumber < 0)
+            {
+                return;
+            }
             int modnumber = (startNumber % 20 == 0) ? 1 : startNumber % 20;
             PinList.Add(modnumber);
-            startNumber = -3;
-            repeat++;
+            startNumber -= 3;
         }
     }
 
     void PinPresses(int pinIndex)
     {
-        if (PinList.Count < 1)
+        for (int i = 0; i < PinList.Count; i++)
         {
+            Debug.Log(PinList[i]);
+        }
+
+        if (PinList.Count == 0)
+        {
+            Strike();
             return;
         }
 
-        if (pinIndex == PinList.First())
+        if (pinIndex == PinList[0])
         {
             PinList.RemoveAt(0);
         }
         else
         {
             Strike();
+        }
+
+        if (PinList.Count <= 0)
+        {
+            ChipBroken = false;
         }
     }
 
@@ -396,94 +417,106 @@ public class NumericalNightmare : MonoBehaviour
         //Take digital root then mod 3, if 0 add 1
         CorrectWire123 = Math.DRoot(stageNumber) % 3;
 
-        string compare = "ABC";
-        if (compare.Contains(FirstSerialLetter))
-        {
-            CorrectWireABC = FirstSerialLetter.ToString();
-        }
-        else
-        {
-            CorrectWireABC = WireABCConst;
-        }
-    }
-
-    void WireABCConstCalc()
-    {
-        int alphabeticPosition = FirstSerialLetter - 'A' + 1;
-        alphabeticPosition = (alphabeticPosition % 3 == 0) ? 1 : alphabeticPosition % 3;
-        WireABCConst = ('A' + alphabeticPosition - 1).ToString();
+        int modResult = (FirstSerialLetter - 'A' + 1 + LastAndCurrentFaultyStage) % 3;
+        CorrectWireABC = (modResult == 0) ? modResult : 1;
     }
 
     void SwitchWires()
     {
-
-        var onWire = WireABC123.First(x => x.activeInHierarchy == true);
-
         switch (LastWireABC + LastWire123.ToString())
         {
             case "A1":
-                onWire.SetActive(false);
                 WireABC123[0].SetActive(true);
                 break;
             case "A2":
-                onWire.SetActive(false);
                 WireABC123[1].SetActive(true);
                 break;
             case "A3":
-                onWire.SetActive(false);
                 WireABC123[2].SetActive(true);
                 break;
             case "B1":
-                onWire.SetActive(false);
                 WireABC123[3].SetActive(true);
                 break;
             case "B2":
-                onWire.SetActive(false);
                 WireABC123[4].SetActive(true);
                 break;
             case "B3":
-                onWire.SetActive(false);
                 WireABC123[5].SetActive(true);
                 break;
             case "C1":
-                onWire.SetActive(false);
                 WireABC123[6].SetActive(true);
                 break;
             case "C2":
-                onWire.SetActive(false);
                 WireABC123[7].SetActive(true);
                 break;
             case "C3":
-                onWire.SetActive(false);
                 WireABC123[8].SetActive(true);
                 break;
         }
     }
 
+    void WirePressing(int WireIndex)
+    {
+        if (WireIndex == CorrectWireABC)
+        {
+            ABC = true;
+        }
+        else if (WireIndex < 4)
+        {
+            ABC = false;
+        }
+
+        if (WireIndex == CorrectWire123)
+        {
+            Onetwothree = true;
+        }
+        else if (WireIndex > 3)
+        {
+            Onetwothree = false;
+        }
+
+        if (ABC && Onetwothree)
+        {
+            WiresBroken = false;
+        }
+        else
+        {
+            WiresBroken = true;
+            ABC = false;
+            Onetwothree = false;
+        }
+    }
+
     #endregion
+
+    #region Stage Handling
 
     void StageAdvanceHandler()
     {
         if (Rnd.Range(0f, 100f) < FaultyProbability && StagesDone > 2 && FaultyThisStage == false)
         {
-            switch (Rnd.Range(1,3))
+            switch (Rnd.Range(1,4))
             {
                 case 1:
                     //Symbols and Stage are Faulty
                     DisplayAndStoreRandomSymbolsFaulty();
                     DisplayAndStoreStageFaulty();
-                    WireCombination();
+                    PinsToPress();
+                    ChipBroken = true;
                     break;
                 case 2:
                     //Only Symblos are Faulty
                     DisplayAndStoreRandomSymbolsFaulty();
                     DisplayStageWorking();
                     DialGoalPosition();
+                    DialsBroken = true;
                     break;
                 case 3:
                     //Only Stage is Faulty
                     DisplayRandomSymbolsWorking();
                     DisplayAndStoreStageFaulty();
+                    WireCombination();
+                    WiresBroken = true;
                     break;
             }
 
@@ -505,6 +538,10 @@ public class NumericalNightmare : MonoBehaviour
         Debug.Log("Do your symbols work? " + SymbolsAreWorking);
 
     }
+
+    #endregion
+
+    #region Input Handling
 
     //Handling Presses
     void PressHandler(KMSelectable button)
@@ -630,31 +667,41 @@ public class NumericalNightmare : MonoBehaviour
                     case 35:
                         LastWireABC = "A";
                         SwitchWires();
+                        WirePressing(1);
                         break;
                     case 36:
                         LastWireABC = "B";
                         SwitchWires();
+                        WirePressing(2);
                         break;
                     case 37:
                         LastWireABC = "C";
                         SwitchWires();
+                        WirePressing(3);
                         break;
                     case 38:
                         LastWire123 = 1;
                         SwitchWires();
+                        WirePressing(4);
                         break;
                     case 39:
                         LastWire123 = 2;
                         SwitchWires();
+                        WirePressing(5);
                         break;
                     case 40:
                         LastWire123 = 3;
                         SwitchWires();
+                        WirePressing(6);
                         break;
                 }
             }
         }
     }
+
+    #endregion
+
+    #region Final Input
 
     //Check Final Input
     void SolveWithFinalInput(int keypad)
@@ -663,8 +710,24 @@ public class NumericalNightmare : MonoBehaviour
         {
             return;
         }
-        Debug.Log(FinalInputList[0]);
-        Debug.Log(keypad);
+
+        if (keypad == FinalInputList[0] && keypad != LastInputNumber)
+        {
+            FinalInputList.RemoveAt(0);
+        }
+        else if (keypad == -1 && FinalInputList[0] == LastInputNumber)
+        {
+            FinalInputList.RemoveAt(0);
+        }
+        else
+        {
+            Strike();
+        }
+
+        if (keypad != -1)
+        {
+            LastInputNumber = keypad;
+        }
     }
 
     //Making the Sequence
@@ -684,10 +747,41 @@ public class NumericalNightmare : MonoBehaviour
         }
     }
 
-    //Hatch Bool
+    #endregion
+
+    //Hatch / Confirm Fix
     void ToggleHatch()
     {
-        HatchOpen = !HatchOpen;
+        if (FinalInput)
+        {
+            HatchOpen = false;
+            return;
+        }
+
+        if (HatchOpen == false)
+        {
+            HatchOpen = true;
+        }
+        else
+        {
+            HatchOpen = false;
+            if (FaultyThisStage == true)
+            {
+                CheckFix();
+            }
+        }
+    }
+
+    void CheckFix()
+    {
+        if (!ChipBroken && !DialsBroken && !WiresBroken)
+        {
+            StageAdvanceHandler();
+        }
+        else
+        {
+            Strike();
+        }
     }
 
     //Solve and Stuff
