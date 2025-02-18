@@ -1,29 +1,25 @@
-﻿using System;
-using System.Collections;
+﻿using System.Text.RegularExpressions;
 using System.Collections.Generic;
+using Rnd = UnityEngine.Random;
+using System.Collections;
+using Math = ExMath;
 using System.Linq;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using KModkit;
-using Rnd = UnityEngine.Random;
-using Math = ExMath;
+using System;
 
 public class NumericalNightmare : MonoBehaviour
 {
-
+    //Unity Publics
+    public GameObject[] WireABC123;
+    public KMSelectable[] Buttons;
+    public TextMesh[] Displays;
+    public Transform[] Dials;
+    public Transform Hatch;
     public KMBombInfo Bomb;
     public KMAudio Audio;
 
-    public KMSelectable[] Buttons;
-    public TextMesh[] Displays;
-
-    public Transform[] Dials;
-
-    public Transform Hatch;
-
-    public GameObject[] WireABC123;
-
-    //Constants
+    //Dictionarys
     static Dictionary<string, int> SymbolDictionary = new Dictionary<string, int>
     {
         { "ᢰ", 7 }, { "ᢱ", 3 }, { "ᢲ", 9 }, { "ᢳ", 2 }, { "ᢴ", 5 },
@@ -51,61 +47,66 @@ public class NumericalNightmare : MonoBehaviour
         { 7, 315f }
     };
 
-    char FirstSerialLetter;
+    static Dictionary<int, string> EasterEggSounds = new Dictionary<int, string>
+    {
+        {0, "Lucky!"},
+        {1, "DoubleGolden1UP" },
+    };
 
+    //Quaternions for Hatch Movement
     static Quaternion targetQuaternionOpen = Quaternion.Euler(new Vector3(0, -105f, 0));
     static Quaternion targetQuaternionClose = Quaternion.Euler(new Vector3(0, 0f, 0));
 
-    const float RotationsSpeed = 10f;
+    //Variabels
+    bool SymbolsAreWorking = true;  //Are the symbols working?
+    bool FaultyThisStage = false;   //Was/Is there a fault this stage?
+    bool StageIsWorking = true;     //Is the stage working?
+    bool DialsBroken = false;       //Are the dials broken?
+    bool WiresBroken = false;       //Are the wires broken?
+    bool ChipBroken = false;        //Is the chip broken?
+    bool FinalInput = false;        //Module ready for final input?
+    bool HatchOpen = false;         //Hatch opened or closed?
 
-    //Variables
-    float FaultyProbability = 1.5625f;
-    int StagesDone = 0;
+    float FaultyProbability = 1.5625f;  //Chance for fault
+    float RotationSpeed = 10f;          //Hatch default rotationspeed
+    float Angle;                        //Angle for Dial turning
 
-    bool StageIsWorking = true;
-    bool SymbolsAreWorking = true;
-    bool FinalInput = false;
-    bool FaultyThisStage = false;
-    public bool HatchOpen = false;
-    bool ABC = false;
-    bool Onetwothree = false;
+    int LastValidAndThisStageSecondSymbolValue; //Last fault stage symbols will be safed as soon as a fault symbol gets generated
+    int LastValidAndThisStageFirstSymbolValue;  //so its also the current one aswell
+    int LastAndCurrentFaultyStage = 0;          //Same goes with the stages
+    int LastInputNumber;                        //Last Inputed number for the final sequence
+    int CorrectWire123;                         //Correct wire connection points (1, 2, 3) for current fault stage
+    int CorrectWireABC;                         //Same for connections (A, B, C)
+    int StagesDone = 0;                         //Completed Stages
+    int LastWire123;                            //Last Selected connection from (1, 2, 3)
+    int LastWireABC;                            //Last Selected connection from (A, B, C)
+    int Dial1Goal;                              //End position of dial 1
+    int Dial2Goal;                              //and dial 2
+    int Dial3Goal;                              //and dial 3
 
-    bool ChipBroken = false;
-    bool DialsBroken = false;
-    bool WiresBroken = false;
+    char FirstSerialLetter;
 
-    float Angle;
-    int LastAndCurrentFaultyStage = 0;
+    string CurrentActiveWire;
     string FaultySymbol;
-    int LastValidAndThisStageFirstSymbolValue;
-    int LastValidAndThisStageSecondSymbolValue;
+    string Symbol1Temp;
+    string Symbol2Temp;
 
-    int CorrectWireABC;
-    int CorrectWire123;
-
-    string LastWireABC;
-    int LastWire123;
-
-    int Dial1Goal;
-    int Dial2Goal;
-    int Dial3Goal;
-
-    int LastInputNumber;
     bool final = true;
 
-    List<int> PinList = new List<int>();
-    List<int> FinalInputList = new List<int>();
     List<int> CurrentDialPositions = new List<int> { 0, 0, 0 };
+    List<int> EasterEggKeypadList = new List<int>();
+    List<int> FinalInputList = new List<int>();
+    List<int> PinList = new List<int>();
 
     //Boss mod shit
     public static string[] ignoredModules = null;
-    int SolvableModCount = 20;
-    public int SolvedModCount = 0;
-    int Stage = 0;
-    bool WaitForModCount;
     static int ModuleIdCounter = 1;
-    int ModuleId;
+    public int SolvedModCount = 0;
     private bool ModuleSolved;
+    int SolvableModCount = 10;
+    bool WaitForModCount;
+    int Stage = 0;
+    int ModuleId;
 
     void Awake()
     {
@@ -172,7 +173,8 @@ public class NumericalNightmare : MonoBehaviour
                 "Übermodule",
                 "Ultimate Custom Night",
                 "The Very Annoying Button",
-                "Whiteout"
+                "Whiteout",
+                "Numerical Nightmare"
             });
         }
     }
@@ -242,17 +244,17 @@ public class NumericalNightmare : MonoBehaviour
 
         if (HatchOpen)
         {
-            Hatch.localRotation = Quaternion.Slerp(Hatch.localRotation, targetQuaternionOpen, RotationsSpeed * Time.deltaTime);
+            Hatch.localRotation = Quaternion.Slerp(Hatch.localRotation, targetQuaternionOpen, RotationSpeed * Time.deltaTime);
         }
         else
         {
-            Hatch.localRotation = Quaternion.Slerp(Hatch.localRotation, targetQuaternionClose, RotationsSpeed * 1.3f * Time.deltaTime);
+            Hatch.localRotation = Quaternion.Slerp(Hatch.localRotation, targetQuaternionClose, RotationSpeed * 1.3f * Time.deltaTime);
         }
 
 
-        //SolvableModCount = Bomb.GetSolvableModuleNames().Count(x => !ignoredModules.Contains(x));
+        SolvableModCount = Bomb.GetSolvableModuleNames().Count(x => !ignoredModules.Contains(x));
 
-        //SolvedModCount = Bomb.GetSolvedModuleNames().Count(x => !ignoredModules.Contains(x));
+        SolvedModCount = Bomb.GetSolvedModuleNames().Count(x => !ignoredModules.Contains(x));
 
 
 
@@ -272,6 +274,8 @@ public class NumericalNightmare : MonoBehaviour
             Stage++;
             StageAdvanceHandler();
             StagesDone++;
+            ResetInside();
+            if (HatchOpen == true) HatchOpen = false;
         }
     }
 
@@ -281,11 +285,17 @@ public class NumericalNightmare : MonoBehaviour
     {
         SymbolsAreWorking = true;
 
-        Displays[1].text = SymbolDictionary.Keys.PickRandom();
-        Displays[2].text = SymbolDictionary.Keys.Where(x => x != Displays[1].text).PickRandom();
+        Displays[1].text = Symbol1Temp;
+        Displays[2].text = Symbol2Temp;
+    }
 
-        LastValidAndThisStageFirstSymbolValue = SymbolDictionary[Displays[1].text];
-        LastValidAndThisStageSecondSymbolValue = SymbolDictionary[Displays[2].text];
+    void GetRandomSymbolsReady()
+    {
+        Symbol1Temp = SymbolDictionary.Keys.PickRandom();
+        Symbol2Temp = SymbolDictionary.Keys.Where(x => x != Symbol1Temp).PickRandom();
+
+        LastValidAndThisStageFirstSymbolValue = SymbolDictionary[Symbol1Temp];
+        LastValidAndThisStageSecondSymbolValue = SymbolDictionary[Symbol2Temp];
     }
 
     void DisplayAndStoreRandomSymbolsFaulty()
@@ -328,7 +338,12 @@ public class NumericalNightmare : MonoBehaviour
     {
         StageIsWorking = false;
 
-        Displays[0].text = (Stage + Rnd.Range(-(Stage/3), 10)).ToString();
+        int displayTemp = (Stage + Rnd.Range(-(Stage / 3), 10));
+        if (displayTemp == Stage)
+        {
+            Displays[0].text = (displayTemp - 3).ToString();
+        }
+        Displays[0].text = displayTemp.ToString();
         LastAndCurrentFaultyStage = int.Parse(Displays[0].text);
     }
 
@@ -351,8 +366,17 @@ public class NumericalNightmare : MonoBehaviour
             newPositionIndex = 0;
         }
         Angle = DialPositionDictionary[newPositionIndex];
-        Dials[dialIndex].rotation = Quaternion.Euler(-90f, 0f, Angle);
+        Dials[dialIndex].localRotation = Quaternion.Euler(-90f, 0f, Angle);
         CurrentDialPositions[dialIndex] = newPositionIndex;
+
+        if (CurrentDialPositions[0] == Dial1Goal && CurrentDialPositions[1] == Dial2Goal && CurrentDialPositions[2] == Dial3Goal)
+        {
+            DialsBroken = false;
+        }
+        else
+        {
+            DialsBroken = true;
+        }
     }
 
     #endregion
@@ -415,75 +439,59 @@ public class NumericalNightmare : MonoBehaviour
         //If less than 10 add 15
         stageNumber = (stageNumber < 10) ? stageNumber + 15 : stageNumber;
         //Take digital root then mod 3, if 0 add 1
-        CorrectWire123 = Math.DRoot(stageNumber) % 3;
+        CorrectWire123 = (Math.DRoot(stageNumber) % 3 == 0) ? 1 : Math.DRoot(stageNumber) % 3;
 
         int modResult = (FirstSerialLetter - 'A' + 1 + LastAndCurrentFaultyStage) % 3;
-        CorrectWireABC = (modResult == 0) ? modResult : 1;
+        CorrectWireABC = (modResult == 0) ? 1 : modResult;
+
+        Debug.Log(CorrectWireABC.ToString() + CorrectWire123.ToString());
     }
 
     void SwitchWires()
     {
-        switch (LastWireABC + LastWire123.ToString())
+        CurrentActiveWire = LastWireABC.ToString() + LastWire123.ToString();
+        for (int i = 0; i < WireABC123.Length; i++)
         {
-            case "A1":
+            WireABC123[i].SetActive(false);
+        }
+        switch (CurrentActiveWire)
+        {
+            case "11":
                 WireABC123[0].SetActive(true);
                 break;
-            case "A2":
+            case "12":
                 WireABC123[1].SetActive(true);
                 break;
-            case "A3":
+            case "13":
                 WireABC123[2].SetActive(true);
                 break;
-            case "B1":
+            case "21":
                 WireABC123[3].SetActive(true);
                 break;
-            case "B2":
+            case "22":
                 WireABC123[4].SetActive(true);
                 break;
-            case "B3":
+            case "23":
                 WireABC123[5].SetActive(true);
                 break;
-            case "C1":
+            case "31":
                 WireABC123[6].SetActive(true);
                 break;
-            case "C2":
+            case "32":
                 WireABC123[7].SetActive(true);
                 break;
-            case "C3":
+            case "33":
                 WireABC123[8].SetActive(true);
                 break;
         }
-    }
 
-    void WirePressing(int WireIndex)
-    {
-        if (WireIndex == CorrectWireABC)
-        {
-            ABC = true;
-        }
-        else if (WireIndex < 4)
-        {
-            ABC = false;
-        }
-
-        if (WireIndex == CorrectWire123)
-        {
-            Onetwothree = true;
-        }
-        else if (WireIndex > 3)
-        {
-            Onetwothree = false;
-        }
-
-        if (ABC && Onetwothree)
+        if (CurrentActiveWire == (CorrectWireABC.ToString() + CorrectWire123.ToString()))
         {
             WiresBroken = false;
         }
         else
         {
             WiresBroken = true;
-            ABC = false;
-            Onetwothree = false;
         }
     }
 
@@ -493,8 +501,12 @@ public class NumericalNightmare : MonoBehaviour
 
     void StageAdvanceHandler()
     {
+        GetRandomSymbolsReady();
+        FinalInputBuilding();
         if (Rnd.Range(0f, 100f) < FaultyProbability && StagesDone > 2 && FaultyThisStage == false)
         {
+            HatchOpen = false;
+
             switch (Rnd.Range(1,4))
             {
                 case 1:
@@ -529,13 +541,36 @@ public class NumericalNightmare : MonoBehaviour
             DisplayStageWorking();
             FaultyProbability *= 2;
             FaultyThisStage = false;
-            FinalInputBuilding();
         }
 
         Debug.Log("You are at Stage: " + Stage);
         Debug.Log("Your FaultyProbability is at: " + FaultyProbability);
         Debug.Log("Do your stages work? " + StageIsWorking);
         Debug.Log("Do your symbols work? " + SymbolsAreWorking);
+
+    }
+
+    #endregion
+
+    #region Reset Inside
+
+    void ResetInside()
+    {
+        //Wires
+        LastWire123 = 0;
+        LastWireABC = 0;
+
+        for (int i = 0; i < WireABC123.Length; i++)
+        {
+            WireABC123[i].SetActive(false);
+        }
+
+        //Dials
+        for (int i = 0; i < 3; i++)
+        {
+            Dials[i].localRotation = Quaternion.Euler(-90f, 0f, 0);
+            CurrentDialPositions[i] = 0;
+        }
 
     }
 
@@ -561,33 +596,43 @@ public class NumericalNightmare : MonoBehaviour
                 {
                     case 0:
                         SolveWithFinalInput(0);
+                        EasterEggs(0);
                         break;
                     case 1:
                         SolveWithFinalInput(1);
+                        EasterEggs(1);
                         break;
                     case 2:
                         SolveWithFinalInput(2);
+                        EasterEggs(2);
                         break;
                     case 3:
                         SolveWithFinalInput(3);
+                        EasterEggs(3);
                         break;
                     case 4:
                         SolveWithFinalInput(4);
+                        EasterEggs(4);
                         break;
                     case 5:
                         SolveWithFinalInput(5);
+                        EasterEggs(5);
                         break;
                     case 6:
                         SolveWithFinalInput(6);
+                        EasterEggs(6);
                         break;
                     case 7:
                         SolveWithFinalInput(7);
+                        EasterEggs(7);
                         break;
                     case 8:
                         SolveWithFinalInput(8);
+                        EasterEggs(8);
                         break;
                     case 9:
                         SolveWithFinalInput(9);
+                        EasterEggs(9);
                         break;
                     case 10:
                         SolveWithFinalInput(-1);
@@ -665,34 +710,28 @@ public class NumericalNightmare : MonoBehaviour
                         MoveDials(2);
                         break;
                     case 35:
-                        LastWireABC = "A";
+                        LastWireABC = 1;
                         SwitchWires();
-                        WirePressing(1);
                         break;
                     case 36:
-                        LastWireABC = "B";
+                        LastWireABC = 2;
                         SwitchWires();
-                        WirePressing(2);
                         break;
                     case 37:
-                        LastWireABC = "C";
+                        LastWireABC = 3;
                         SwitchWires();
-                        WirePressing(3);
                         break;
                     case 38:
                         LastWire123 = 1;
                         SwitchWires();
-                        WirePressing(4);
                         break;
                     case 39:
                         LastWire123 = 2;
                         SwitchWires();
-                        WirePressing(5);
                         break;
                     case 40:
                         LastWire123 = 3;
                         SwitchWires();
-                        WirePressing(6);
                         break;
                 }
             }
@@ -749,21 +788,26 @@ public class NumericalNightmare : MonoBehaviour
 
     #endregion
 
+    #region Hatch and Fix
+
     //Hatch / Confirm Fix
     void ToggleHatch()
     {
         if (FinalInput)
         {
             HatchOpen = false;
+            Audio.PlaySoundAtTransform("HatchCloseSound", Hatch);
             return;
         }
 
         if (HatchOpen == false)
         {
+            Audio.PlaySoundAtTransform("HatchOpenSound", Hatch);
             HatchOpen = true;
         }
         else
         {
+            Audio.PlaySoundAtTransform("HatchCloseSound", Hatch);
             HatchOpen = false;
             if (FaultyThisStage == true)
             {
@@ -783,6 +827,39 @@ public class NumericalNightmare : MonoBehaviour
             Strike();
         }
     }
+
+    #endregion
+
+    #region Easter Eggs
+    void EasterEggs(int keypad)
+    {
+        EasterEggKeypadList.Add(keypad);
+
+        if (EasterEggKeypadList.Count < 4 || Stage != 0)
+        {
+            return;
+        }
+
+        //Luck! - Type in the year that the first paper mario came out in.
+        if (EasterEggKeypadList.SequenceEqual(new List<int> { 2, 0, 0, 0}))
+        {
+            Audio.PlaySoundAtTransform(EasterEggSounds[0], Hatch);
+        }
+
+        //Double Golden 1-UP - Type in the year that Celeste came out in.
+        if (EasterEggKeypadList.SequenceEqual(new List<int> { 2, 0, 1, 8 }))
+        {
+            Audio.PlaySoundAtTransform(EasterEggSounds[1], Hatch);
+        }
+
+        if (EasterEggKeypadList.Count >= 4)
+        {
+            EasterEggKeypadList.RemoveRange(0, 4);
+        }
+    }
+
+
+    #endregion
 
     //Solve and Stuff
 
