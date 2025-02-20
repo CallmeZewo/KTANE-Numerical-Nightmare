@@ -1,0 +1,348 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1">
+    <title>Module Name — Keep Talking and Nobody Explodes Module</title>
+    <link rel="stylesheet" type="text/css" href="css/font.css">
+    <link rel="stylesheet" type="text/css" href="css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script src="js/ktane-utils.js"></script>
+    <style>
+        /* !!!!!!!!!!!!! DELETE THE CSS STYLES AND COMMENTS THAT YOU DON'T NEED !!!!!!!!!!!!! */
+        /* You don't need to comment your CSS styles */
+
+        /* ▼ the usual table default style ▼
+        table {
+            margin: 1em auto;
+            border: none;
+        }
+        */
+
+        table {
+            margin: 0.4em;            /* Use this to make space around ALL tables */
+            /* margin: 1em auto; */   /* Use this instead to make space around and center ALL tables */
+            border: none;             /* And this if you want to make some "corner" cells have no border */
+        }
+
+        /* Slightly less space above bullet lists and numbered lists */
+        ul, ol { margin-top: 0.5em; }
+
+        /* Use the below to center-jusitify ALL table cells */
+        /*
+        td {
+            text-align: center;
+        }
+        */
+
+        /* Only to be used to make one image or table float left or right of the text. */
+        /* NOT to align two tables next to each other as this messes up in narrow width windows liek for EFMing */
+        .left { float: left; }
+
+        /* Create some vertical space with a div */
+        .vspace { height: 5mm; }
+        .big-vspace { height: 12mm; }
+
+        /* SVG styles */
+        svg.grid { width: 200px; }
+        svg text {
+            user-select: none;
+            pointer-events: none;
+        }
+        /* Extra SVG styles for dark mode */
+        .dark svg.grid path {
+            stroke: #DDD;
+        }
+        .dark svg.grid text {
+            fill: #DDD;
+        }
+
+        .example-img { width: 60%; }
+
+        .page-footer::before { content: 'Page '; }
+        .page-footer::after { content: ' of 5'; }
+        /* Change 5 to the number of pages ^^ */
+    </style>
+</head>
+<body>
+    <div class="section">
+        <div class="page page-bg-01">
+            <div class="page-header">
+                <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                <span class="page-header-section-title">Module Name</span>
+            </div>
+            <div class="page-content">
+                <img src="img/Component/Module Name.svg" class="diagram">
+                <h2>On the Subject of Module Name</h2>
+                <p class="flavour-text">Your flavor text should go here.</p>
+
+                <p>Remember to change the name of your SVG file, HTML file, and JSON file to be the name of your module.</p>
+                <ul>
+                    <li>If you have no extra images to add to your manual, delete the “Module Name” folder inside the “img” folder.</li>
+                    <li>Otherwise, rename the “Module Name” folder to be the name of your module.</li>
+                    <li>
+                        Make sure to zip up these files at the top level containing the HTML and JSON folders,
+                        and send a DM to Logbot on Discord with the text “<code>!lint</code>” with the ZIP file attached.
+                    </li>
+                    <li>Fix any linting errors before you post your finished manual in the <code>#repo-requests</code> channel.</li>
+                    <li>Let someone know in <code>#mod-creation</code> or <code>#repo-discussion</code> if you need help fixing the errors.</li>
+                </ul>
+                <p>
+                    If you need to make changes to your manual after it’s already on the repo, <b>download the <a href="https://github.com/Timwi/KtaneContent/tree/master/HTML">latest version of your manual</a> from the repo BEFORE you make your changes.</b><br>
+                    Your local copy may not be the latest version even after 1 day.
+                    Manuals are edited when the request is processed and updated often for efficiency, style consolidation, dark mode, etc.<br>
+                    And please DO NOT post the entire ZIP file again in <code>#repo-requests</code>, only the files that have changed.
+                    Usually, you only have to fix something in the HTML file, so only post that, no need to zip it up.<br>
+                    If you are changing multiple files, then you need to zip them up and describe what changed in your message when you post in <code>#repo-requests</code>.
+                </p>
+                <p><em>If you are making an alternate manual</em>, when you post the HTML file (no need to zip it up),
+                    make sure to include the full name of the HTML file in the <em><b>text</b></em> of the request because it gets changed by Discord on
+                    upload and it’s a pain for alternate manuals (especially translations) because of all the spaces and special characters that get changed or deleted.
+                    So paste something like this in your request message: <code>Cruel Piano Keys optimized (YourUsername).html</code><br>
+                    or: <code>Adjacent Letters translated (Español — Letras Adyacentes) (Name).html</code>
+                </p>
+            </div>
+            <div class="page-footer relative-footer">1</div>
+        </div>
+        <div class="page page-bg-02">
+            <div class="page-header">
+                <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                <span class="page-header-section-title">Module Name</span>
+            </div>
+            <div class="page-content">
+                <h2>Tutorial and Examples</h2>
+
+                <p>Here are templates for commonly used manual features. Make sure to always use closing tags (the ones with a <code>/</code> in them).</p>
+
+                <h3>Bullet Points (Unordered Lists)</h3>
+                <ul>
+                    <li>Bullet points should use the <code>&lt;ul&gt;&lt;/ul&gt;</code> and <code>&lt;li&gt;&lt;/li&gt;</code> tags.</li>
+                    <li>You can even have nested bullet points:
+                        <ul>
+                            <li>Indented</li>
+                            <li>Bullet Points</li>
+                        </ul>
+                    </li>
+                    <li>Or numbered lists:
+                        <ol>
+                            <li>Indented</li>
+                            <li>Bullet Points</li>
+                        </ol>
+                    </li>
+                </ul>
+
+                <h3>Numbered Lists (Ordered Lists)</h3>
+                <ol>
+                    <li>Numbered lists should use the <code>&lt;ol&gt;&lt;/ol&gt;</code> and <code>&lt;li&gt;&lt;/li&gt;</code> tags.</li>
+                    <li>Nested lists work just like unordered lists (see above).</li>
+                </ol>
+
+                <h3>Text</h3>
+                <p>Use paragraph tags (<code>&lt;p&gt;&lt;/p&gt;</code>) for text blocks. In addition, for text formatting, use:</p>
+                <ul>
+                    <li>
+                        <b>Bold</b>: <code>&lt;b&gt;&lt;/b&gt;</code> (HTML) or <code>font-weight: bold;</code> (CSS).
+                        Bold in table headers should be achieved through the use of the <code>&lt;th&gt;&lt;/th&gt;</code> tag.
+                    </li>
+                    <li><u>Underline</u>: <code>&lt;u&gt;&lt;/u&gt;</code> or <code>&lt;em&gt;&lt;/em&gt;</code> (HTML) or <code>text-decoration: underline;</code> (CSS).</li>
+                    <li><i>Italics</i>: <code>&lt;i&gt;&lt;/i&gt;</code> (HTML) or <code>font-style: italic;</code> (CSS).</li>
+                    <li>Use “these” type of quote marks to quote text in paragraphs and ‘these’ single quotes for apostrophes or single quotes.</li>
+                    <li>Line<br>Break: <code>&lt;br&gt;</code> (HTML)</li>
+                </ul>
+                <p>
+                    For the most part, HTML versions of bolding and underlining is recommended.
+                    Note that <b><i>italics</i></b> are not used in vanilla manuals besides flavor text and references to appendices, and therefore is not typically used.
+                    Also, here are some sample headings:
+                </p>
+                <h3>Example Big Heading</h3>
+                <h4 class="centered">Example Small Heading (centered)</h4>
+            </div>
+            <div class="page-footer relative-footer">2</div>
+        </div>
+        <div class="page page-bg-02">
+            <div class="page-header">
+                <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                <span class="page-header-section-title">Module Name</span>
+            </div>
+            <div class="page-content">
+                <h3>Example Tables</h3>
+                <table>
+                    <tr>
+                        <th>Part of table</th>
+                        <th>How to make</th>
+                    </tr>
+                    <tr>
+                        <th>Rows and Columns</th>
+                        <td>
+                            Use <code>&lt;tr&gt;&lt;/tr&gt;</code> for rows.
+                            Use <code>&lt;th&gt;&lt;/th&gt;</code> or <code>&lt;td&gt;&lt;/td&gt;</code> for columns within rows (see below).
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Headings (left column and top row, in most cases)</th>
+                        <td>Use <code>&lt;th&gt;&lt;/th&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <th>Cells</th>
+                        <td>Use <code>&lt;td&gt;&lt;/td&gt;</code></td>
+                    </tr>
+                    <tr>
+                        <th rowspan="2">Merged Cells</th>
+                        <td>Use <code>rowspan="_"</code> for merging cells vertically.</td>
+                    </tr>
+                    <tr>
+                        <td>Use <code>colspan="_"</code> for merging cells horizontally.</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Note that merged cells created in other rows are skipped in affected rows (see HTML for above row).</td>
+                    </tr>
+                </table>
+                <p>
+                    If the table contents are not wide enough, tables may be centered by default with the <code>table</code> rule in the
+                    <code>&lt;style&gt;</code> block (see above, <b><code>margin: 1em auto;</code></b>).
+                    Or you can center only certain tables with the <code>centered</code> class:
+                </p>
+                <table class="centered">
+                    <tr><th>Cell 1</th><td>Cell 2</td></tr>
+                    <tr><th>Cell 3</th><td>Cell 4</td></tr>
+                </table>
+
+                <h3>Images</h3>
+                <p>
+                    Use the <code>&lt;img src="_" /&gt;</code> tag for images. Make sure to put your images into the <code class="notcode">/img/[Module Name]/</code> folder.
+                    Adjust the width with CSS, using <code>width: _%;</code> (recommended) or <code>width: _cm;</code>. Example:
+                </p>
+                <img class="centered-img example-img" src="img/Module Name/Example Image.png">
+                <p class="centered">Paragraphs like this can also use the <code>centered</code> class. <br>Images can be centered with the <code>centered-img</code> class.</p>
+            </div>
+            <div class="page-footer relative-footer">3</div>
+        </div>
+        <div class="page page-bg-03">
+            <div class="page-header">
+                <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                <span class="page-header-section-title">Module Name</span>
+            </div>
+            <div class="page-content">
+                <h3>Example of table with hidden corners and other cells</h3>
+                <table>
+                    <caption>Tables can also have a title using the <code>caption</code> tag.</caption>
+                    <tr><th class="corner"></th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th></tr>
+                    <tr><th>Thing 1</th><td>Data 11</td><td>Data 12</td><td>Data 13</td><td>Data 14</td><td>Data 15</td><td>Data 16</td><td>Data 17</td></tr>
+                    <tr><th>Thing 2</th><td>Data 21</td><td>Data 22</td><td>Data 23</td><td>Data 24</td><td>Data 25</td><td>Data 26</td><td>Data 27</td></tr>
+                    <tr><th>Thing 3</th><td>Data 31</td><td>Data 32</td><td>Data 33</td><td>Data 34</td><td>Data 35</td><td>Data 36</td><td>Data 37</td></tr>
+                    <tr><th>Thing 4</th><td>Data 41</td><td>Data 42</td><td>Data 43</td><td>Data 44</td><td>Data 45</td><td>Data 46</td><td>Data 47</td></tr>
+                    <tr><th>Thing 5</th><td>Data 51</td><td>Data 52</td><td>Data 53</td><td>Data 54</td><td>Data 55</td><td>Data 56</td><td>Data 57</td></tr>
+                    <tr><th>Thing 6</th><td>Data 61</td><td>Data 62</td><td>Data 63</td><td>Data 64</td><td colspan="3" class="empty"></td></tr>
+                    <tr><th>Thing 7</th><td>Data 71</td><td>Data 72</td><td>Data 73</td><td colspan="4" class="empty"></td></tr>
+                </table>
+
+                <h3>Making the PDF</h3>
+                <p>
+                    For 99% of manuals, you do not need to do this, the PDF is generated automatically by the website.
+                    Only do this if there is a good reason. Example: <code>Ikea Documents</code> has images that need to take up the full page
+                    and are not all the right page dimensions, so a custom PDF is needed.
+                </p>
+                <p>
+                    To make a PDF version of your manual, open the HTML file in Google Chrome and open the “Print” dialog
+                    (Usually <kbd>CTRL</kbd>+<kbd>P</kbd>) and choose “Save as PDF” as the destination.
+                </p>
+
+                <h3>Alt-o</h3>
+                <p>Press <b>Alt-o</b> on your keyboard and check that dark mode, highlighting, and side-by-side mode all look good and work the way you want them to.</p>
+                <p>
+                    Dark mode (<b>Alt-w</b>) is also a good way to check if your page content is too big for the page, which messes up both the gritty page background
+                    (especially in dark mode) and the auto-generated PDF.
+                </p>
+                <p><b>Ctrl</b>-<b>Shift</b>-click or <b>Alt</b>-click to highlight elements like bullet list items and table cells. Also try <b>Shift</b>-click and <b>Ctrl</b>-click for table cells.</p>
+            </div>
+            <div class="page-footer relative-footer">4</div>
+        </div>
+
+        <div class="page page-bg-03">
+            <div class="page-header">
+                <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                <span class="page-header-section-title">Module Name</span>
+            </div>
+            <div class="page-content">
+                <h3>Highlightable Elements</h3>
+                <svg class="grid left" viewBox="0 0 64 59" xmlns="http://www.w3.org/2000/svg" text-anchor="middle" font-size="12">
+                    <path class="highlightable" fill="transparent" stroke="#000" d="m24.1 4 8.6 5v10l-8.6 5-8.7-5V9z"/>
+                    <text x="24.1" y="18">F</text>
+                    <path class="highlightable" fill="transparent" stroke="#000" d="m41.4 4 8.7 5v10l-8.7 5-8.7-5V9z"/>
+                    <text x="41.4" y="18">7</text>
+                    <path class="highlightable" fill="transparent" stroke="#000" d="m15.4 19.1 8.7 5v10l-8.7 5-8.6-5v-10z"/>
+                    <text x="15.4" y="33.1">9</text>
+                    <path class="highlightable" fill="transparent" stroke="#000" d="m32.7 19.1 8.7 5v10l-8.7 5-8.6-5v-10z"/>
+                    <text x="32.7" y="33.1">7</text>
+                    <path class="highlightable" fill="transparent" stroke="#000" d="m50.1 19.1 8.6 5v10l-8.6 5-8.7-5v-10z"/>
+                    <text x="50.1" y="33.1">1</text>
+                    <path class="highlightable" fill="transparent" stroke="#000" d="m24.1 34.2 8.6 5v10l-8.6 5-8.7-5v-10z"/>
+                    <text x="24.1" y="48.2">7</text>
+                    <path class="highlightable" fill="transparent" stroke="#000" d="m41.4 34.2 8.7 5v10l-8.7 5-8.7-5v-10z"/>
+                    <text x="41.4" y="48.2">3</text>
+                </svg>
+                <p>
+                    These hexagons are individually highlightable using the <code>highlightable</code> class.
+                    The text doesn’t get in the way of the highlighting because of the <code>svg text</code> CSS in the <code>style</code> section.
+                    The lines and text also turn white in dark mode because of more CSS in the <code>style</code> section.
+                </p>
+
+                <div class="big-vspace"></div>
+                <p class="highlightable">
+                    This entire paragraph is highlightable because of the <code>highlightable</code> class.
+                    Elements like <code>span</code>, <code>h3</code>, <code>h4</code>, <code>div</code>, and others can be made highlightable with the <code>highlightable</code> class.
+                </p>
+                <p>Only the <b><span class="highlightable">bolded span in this paragraph</span></b> is highlightable, not the whole paragraph.</p>
+                <h3 class="highlightable">This header is highlightable</h3>
+                <p>
+                    <span class="highlightable">Every</span> <span class="highlightable">word</span> <span class="highlightable">in</span> <span class="highlightable">this</span>
+                    <span class="highlightable">sentence</span> <span class="highlightable">is</span> <span class="highlightable">individually</span> <span class="highlightable">highlightable.</span>
+                    <br>This effect is much more effeciently achieved with JavaScript, and so is the drawing of the hexagons above. Ask if you need help.
+                </p>
+
+                <div class="vspace"></div>
+                <p>
+                    Table cells are highlightable by default, but for nested tables within tables, you might want to make the bigger table cells NOT highlightable with the <b><code>nohighlight</code></b> class.
+                    The <u>left two</u> big cells below don’t have the <code>nohighlight</code> class and thus the cells are still highlightable, which can be a little awkward if you only want to highlight the inner table’s cells.
+                    The <u>right two</u> big cells below are not highlightable, but the inner table still is.
+                </p>
+                <table>
+                    <tr>
+                        <td>
+                            <table>
+                                <tr><td>A</td><td>B</td><td>C</td><td>D</td></tr>
+                                <tr><td>E</td><td>F</td><td>G</td><td>H</td></tr>
+                                <tr><td>I</td><td>J</td><td>K</td><td>L</td></tr>
+                            </table>
+                        </td>
+                        <td class="nohighlight">
+                            <table>
+                                <tr><td>A</td><td>B</td><td>C</td><td>D</td></tr>
+                                <tr><td>E</td><td>F</td><td>G</td><td>H</td></tr>
+                                <tr><td>I</td><td>J</td><td>K</td><td>L</td></tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <table>
+                                <tr><td>A</td><td>B</td><td>C</td><td>D</td></tr>
+                                <tr><td>E</td><td>F</td><td>G</td><td>H</td></tr>
+                                <tr><td>I</td><td>J</td><td>K</td><td>L</td></tr>
+                            </table>
+                        </td>
+                        <td class="nohighlight">
+                            <table>
+                                <tr><td>A</td><td>B</td><td>C</td><td>D</td></tr>
+                                <tr><td>E</td><td>F</td><td>G</td><td>H</td></tr>
+                                <tr><td>I</td><td>J</td><td>K</td><td>L</td></tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="page-footer relative-footer">5</div>
+        </div>
+    </div>
+</body>
+</html>

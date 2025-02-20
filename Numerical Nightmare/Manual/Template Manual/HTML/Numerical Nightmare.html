@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1">
+    <title>Numerical Nightmare — Keep Talking and Nobody Explodes Module</title>
+    <link rel="stylesheet" type="text/css" href="css/font.css">
+    <link rel="stylesheet" type="text/css" href="css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <script src="js/ktane-utils.js"></script>
+    <style>
+        table h4 { margin: 0; }
+        table { width: 85%; }
+        table.symbol-values {
+            text-align: center;
+            font-weight: bold;
+            font-size: 22px;
+            margin: 1em auto;
+        }
+        table.stage-calc {
+            margin-top: 1em;
+            margin-bottom: 1em;
+        }
+    </style>
+</head>
+<body>
+    <div class="section">
+        <div class="page page-bg-01">
+            <div class="page-header">
+                <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                <span class="page-header-section-title">Numerical Nightmare</span>
+            </div>
+            <div class="page-content">
+                <img src="img/Component/Numerical Nightmare.svg" class="diagram">
+                <h2>On the Subject of Numerical Nightmare</h2>
+                <p class="flavour-text">Why isn’t this stupid thing working!?!?</p>
+                <ul>
+                    <li>
+                        The symbols on the right display update on each solve of a <a href="Location of Non-Ignored Modules">non-ignored module</a>.
+                        The current stage is shown on the bottom display.
+                    </li>
+                    <li>Each symbol has a designated value, listed in the table below, which is used to calculate the current stage’s number.</li>
+                    <li>When all other non-ignored modules have been solved, the display will turn blank and wait for input.</li>
+                    <li>A stage is valid if the following conditions are met:
+                        <ul>
+                            <li>The stage display shows the correct current stage (starting from 0).</li>
+                            <li>Two symbols are shown on the right display.</li>
+                        </ul>
+                    </li>
+                    <li>For invalid stages, refer to “Fixing a module”.</li>
+                </ul>
+                <table class="symbol-values">
+                    <thead>
+                        <tr><td colspan="5">Symbol Values</td></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>ᢰ 7</td><td>ᢱ 3</td><td>ᢲ 9</td><td>ᢳ 2</td><td>ᢴ 5</td></tr>
+                        <tr><td>ᢵ 0</td><td>ᢶ 8</td><td>ᢷ 4</td><td>ᢸ 6</td><td>ᢹ 1</td></tr>
+                        <tr><td>ᢺ 3</td><td>ᢻ 7</td><td>ᢼ 0</td><td>ᢽ 9</td><td>ᢾ 2</td></tr>
+                        <tr><td>ᢿ 5</td><td>ᣀ 4</td><td>ᣁ 6</td><td>ᣂ 8</td><td>ᣃ 1</td></tr>
+                        <tr><td>ᣄ 9</td><td>ᣅ 2</td><td>ᣆ 5</td><td>ᣇ 3</td><td>ᣈ 7</td></tr>
+                        <tr><td>ᣉ 0</td><td>ᣊ 6</td><td>ᣋ 4</td><td>ᣌ 8</td><td>ᣍ 1</td></tr>
+                        <tr><td>ᣎ 2</td><td>ᣏ 9</td><td>ᣐ 5</td><td>ᣑ 7</td><td>ᣒ 3</td></tr>
+                        <tr><td>ᣓ 0</td><td>ᣠ 8</td><td>ᣡ 4</td><td>ᣢ 6</td><td>ᣣ 1</td></tr>
+                        <tr><td>ᣤ 5</td><td>ᣥ 9</td><td>ᣦ 2</td><td>ᣧ 8</td><td>ᣨ 7</td></tr>
+                        <tr><td>ᣩ 3</td><td>ᣪ 0</td><td>ᣫ 6</td><td>ᣬ 4</td><td>ᣭ 1</td></tr>
+                        <tr><td>ᣮ 7</td><td>ᣯ 2</td><td>ᣰ 9</td><td>ᣱ 5</td><td>ᣲ 8</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="page-footer relative-footer">Page 1 of 3</div>
+        </div>
+        <div class="page page-bg-02">
+            <div class="page-header">
+                <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                <span class="page-header-section-title">Numerical Nightmare</span>
+            </div>
+            <div class="page-content">
+                <h2>Solving for stage value</h2>
+                <table class="stage-calc">
+                    <tr>
+                        <td>
+                            <h4>If the digital root of the stage number is greater than 5:</h4>
+                            Add the values of both symbols and the stage number.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h4>If the stage number mod 5 is equal to 0:</h4>
+                            Add the values of both symbols and the correct stage number of the last faulty stage.
+                            If there has been no faulty stage up to this point only use the symbols sum.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <h4>Otherwise:</h4>
+                            Take the product of both symbols.
+                        </td>
+                    </tr>
+                </table>
+                <p>Take the least significant digit of your result.</p>
+            </div>
+            <div class="page-footer relative-footer">Page 2 of 3</div>
+        </div>
+        <div class="page page-bg-03">
+            <div class="page-header">
+                <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
+                <span class="page-header-section-title">Appendix Name</span>
+            </div>
+            <div class="page-content">
+                <h2>Appendix M: Additional Notes</h2>
+                <p>Here other things to keep in mind when making a manual page:</p>
+                <ul>
+                    <li><strong>There are comments <code>/* ... */</code> in the CSS code in the <code>&lt;style&gt;</code> blocks containing instructions. Follow those instructions before finishing your manual.</strong></li>
+                    <li>Normal and Needy module manual pages are formatted similarly. Widget manual pages are appendices and are formatted as such.</li>
+                    <li>Each manual or appendix page should have a <code>&lt;div class="page-footer...</code> at the bottom of the page, updated accordingly.</li>
+                    <li>Don’t be afraid to ask for help if needed!</li>
+                    <li>
+                        A few things to reiterate:
+                        <ul>
+                            <li>Make sure to never forget closing tags (the ones with a <code>/</code> in them).</li>
+                            <li>For the most part, HTML versions of bolding and underlining is recommended.</li>
+                            <li>Italics are not used in vanilla manuals besides flavor text and references to appendices, and therefore is not included above. </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div class="page-footer relative-footer">Page 3 of 3</div>
+        </div>
+    </div>
+</body>
+</html>
