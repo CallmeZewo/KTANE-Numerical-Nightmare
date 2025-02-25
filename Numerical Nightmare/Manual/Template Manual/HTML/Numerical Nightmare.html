@@ -9,17 +9,26 @@
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <script src="js/ktane-utils.js"></script>
     <style>
+        body.dark { --bg: #222; }
+        body { --bg: #fff; }
+
+        h3 { font-size: 1.3em; }
+        table { width: 85%; font-size: 0.9em; }
         table h4 { margin: 0; }
-        table { width: 85%; }
+        table:not(.symbol-values) { margin: 1em auto; }
+        table ul { padding: 0 20px 0 30px; }
         table.symbol-values {
+            background-color: var(--bg);
             text-align: center;
             font-weight: bold;
             font-size: 22px;
             margin: 1em auto;
         }
-        table.stage-calc {
-            margin-top: 1em;
-            margin-bottom: 1em;
+        table.stage-calc { margin-left: 0; }
+        table.fixing-module thead {
+            text-align: center;
+            text-decoration: underline;
+            font-size: 20px;
         }
     </style>
 </head>
@@ -41,10 +50,10 @@
                     </li>
                     <li>Each symbol has a designated value, listed in the table below, which is used to calculate the current stage’s number.</li>
                     <li>When all other non-ignored modules have been solved, the display will turn blank and wait for input.</li>
-                    <li>A stage is valid if the following conditions are met:
+                    <li>A stage is invalid if one of the following conditions is met:
                         <ul>
-                            <li>The stage display shows the correct current stage (starting from 0).</li>
-                            <li>Two symbols are shown on the right display.</li>
+                            <li>The stage display differs from the stage it should show (starting from 0).</li>
+                            <li>At most one symbols is shown on the right display.</li>
                         </ul>
                     </li>
                     <li>For invalid stages, refer to “Fixing a module”.</li>
@@ -76,18 +85,18 @@
                 <span class="page-header-section-title">Numerical Nightmare</span>
             </div>
             <div class="page-content">
-                <h2>Solving for stage value</h2>
+                <h3>Getting valid stage’s value</h3>
                 <table class="stage-calc">
                     <tr>
                         <td>
-                            <h4>If the digital root of the stage number is greater than 5:</h4>
-                            Add the values of both symbols and the stage number.
+                            <h4>If the stage number is prime number:</h4>
+                            Multiply the battery count with the sum of the symbol values and stage number.
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <h4>If the stage number mod 5 is equal to 0:</h4>
-                            Add the values of both symbols and the correct stage number of the last faulty stage.
+                            <h4>If the stage number is square number:</h4>
+                            Add the values of both symbols and the last faulty stage number.
                             If there has been no faulty stage up to this point only use the symbols sum.
                         </td>
                     </tr>
@@ -98,32 +107,106 @@
                         </td>
                     </tr>
                 </table>
-                <p>Take the least significant digit of your result.</p>
+                <p>Note down the least significant digit as your result.</p>
+                <h3>Fixing a Module</h3>
+                <p>
+                    If your module is faulty, open it using the small button on the bottom right of the numpad.
+                    This button also serves as the submit button for your fix and will close the module again.
+                    Locate the correct table that corresponds to the issue with the module.
+                </p>
+                <table class="fixing-module">
+                    <thead>
+                        <tr><th>Wires: Only stage display is faulty</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li>Use the alphanumeric position of the first letter in the serial number and add the faulty displayed stage.</li>
+                                    <li>Take this number, apply modulo 3, and add 1 to get the letter position of your Wire connection.</li>
+                                    <li>Add the 3 Stage numbers preceding this one and multiply it by the faulty displayed stage number.</li>
+                                    <li>Take this number, apply modulo 3, and add 1 to get the number position of your Wire connection.</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li>Pressing a number and a letter creates a connection between them.</li>
+                                    <li>The fault will be resolved once the correct wire is connected and submitted.</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
             <div class="page-footer relative-footer">Page 2 of 3</div>
         </div>
         <div class="page page-bg-03">
             <div class="page-header">
                 <span class="page-header-doc-title">Keep Talking and Nobody Explodes Mod</span>
-                <span class="page-header-section-title">Appendix Name</span>
+                <span class="page-header-section-title">Numerical Nightmare</span>
             </div>
             <div class="page-content">
-                <h2>Appendix M: Additional Notes</h2>
-                <p>Here other things to keep in mind when making a manual page:</p>
-                <ul>
-                    <li><strong>There are comments <code>/* ... */</code> in the CSS code in the <code>&lt;style&gt;</code> blocks containing instructions. Follow those instructions before finishing your manual.</strong></li>
-                    <li>Normal and Needy module manual pages are formatted similarly. Widget manual pages are appendices and are formatted as such.</li>
-                    <li>Each manual or appendix page should have a <code>&lt;div class="page-footer...</code> at the bottom of the page, updated accordingly.</li>
-                    <li>Don’t be afraid to ask for help if needed!</li>
-                    <li>
-                        A few things to reiterate:
-                        <ul>
-                            <li>Make sure to never forget closing tags (the ones with a <code>/</code> in them).</li>
-                            <li>For the most part, HTML versions of bolding and underlining is recommended.</li>
-                            <li>Italics are not used in vanilla manuals besides flavor text and references to appendices, and therefore is not included above. </li>
-                        </ul>
-                    </li>
-                </ul>
+                <table class="fixing-module">
+                    <thead>
+                        <tr><th>Dials: At most one symbol is displayed</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li>Use the symbols from the last valid stage and multiply their values.</li>
+                                    <li>Apply modulo 8 for the position of the first dial.</li>
+                                    <li>Add the symbols value and apply modulo 8 for the second dials position.</li>
+                                    <li>Applying modulo 8 on the product of the battery count and the last faulty shown stage number, gives you the third dials position.</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li>Pressing a dial will rotate it by 45°.</li>
+                                    <li>The fault will be resolved once each dial is in the right position before submitted.</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <table class="fixing-module">
+                    <thead>
+                        <tr><th>Microchip: Stage display is faulty and at most one symbol is displayed</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li>Add the faulty shown stage and the number that you get from the faulty symbol, if there is any.</li>
+                                    <li>Modulo 20 that number, add 1 and press that pin.</li>
+                                    <li>If the first pressed pin is even, multiply the pins position by 5, modulo 20 and add 1 for the second pin.</li>
+                                    <li>Otherwise multiply the pins position with the battery count, modulo 20 and add 1 for the second pin.</li>
+                                    <li>Take the absolute difference of the two positions for the third pin.</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td>
+                                <ul>
+                                    <li>The microchip has 20 pins starting on the top most left pin with 1 going clockwise.</li>
+                                    <li>The fault will resolve if you submit after making every necessary input.</li>
+                                </ul>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <h3>Final Input</h3>
+                <p>Input each stage value in order. If a value is the same as the one immediately before it, press the skip button instead.</p>
             </div>
             <div class="page-footer relative-footer">Page 3 of 3</div>
         </div>

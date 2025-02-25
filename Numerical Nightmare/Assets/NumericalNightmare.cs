@@ -78,6 +78,7 @@ public class NumericalNightmare : MonoBehaviour
     int ThisStageSecondSymbolValue;             //This is just the current symbol that is gonna get displayed this stage
     int ThisStageFirstSymbolValue;              //not depended on fault
     int CurrentDashIndex = 0;                   //Keep track where you are in the DashList
+    int FinalInputIndex = 0;                    //Wich stage is being input into final
     int LastInputNumber;                        //Last Inputed number for the final sequence
     int CorrectWire123;                         //Correct wire connection points (1, 2, 3) for current fault stage
     int CorrectWireABC;                         //Same for connections (A, B, C)
@@ -98,6 +99,7 @@ public class NumericalNightmare : MonoBehaviour
 
     bool final = true;
 
+    List<List<string>> StageSymbolList = new List<List<string>>();
     List<int> CurrentDialPositions = new List<int> { 0, 0, 0 };
     List<int> EasterEggKeypadList = new List<int>();
     List<int> FinalInputList = new List<int>();
@@ -258,9 +260,9 @@ public class NumericalNightmare : MonoBehaviour
         }
 
 
-        //SolvableModCount = Bomb.GetSolvableModuleNames().Count(x => !ignoredModules.Contains(x));
+        SolvableModCount = Bomb.GetSolvableModuleNames().Count(x => !ignoredModules.Contains(x));
 
-        //SolvedModCount = Bomb.GetSolvedModuleNames().Count(x => !ignoredModules.Contains(x));
+        SolvedModCount = Bomb.GetSolvedModuleNames().Count(x => !ignoredModules.Contains(x));
 
 
 
@@ -291,8 +293,17 @@ public class NumericalNightmare : MonoBehaviour
     {
         SymbolsAreWorking = true;
 
+        if (!StageIsWorking)
+        {
+            Displays[1].text = SymbolDictionary.Keys.PickRandom();
+            Displays[2].text = SymbolDictionary.Keys.Where(x => x != Displays[1].text).PickRandom();
+            return;
+        }
+
         Displays[1].text = Symbol1Temp;
         Displays[2].text = Symbol2Temp;
+
+        StageSymbolList.Add(new List<string> { Symbol1Temp, Symbol2Temp } );
     }
 
     void GetRandomSymbolsReady()
@@ -369,7 +380,8 @@ public class NumericalNightmare : MonoBehaviour
     {
         Dial1Goal = (LastValidStageFirstSymbolValue * LastValidStageSecondSymbolValue) % 8;
         Dial2Goal = (LastValidStageFirstSymbolValue + LastValidStageSecondSymbolValue) % 8;
-        Dial3Goal = (Dial1Goal + Dial2Goal) % 8;
+        Debug.Log(LastAndCurrentFaultyStage);
+        Dial3Goal = (Bomb.GetBatteryCount() * LastAndCurrentFaultyStage) % 8;
         Debug.Log("---YOUR CORRECT DIAL POSITIONS");
         Debug.Log(Dial1Goal);
         Debug.Log(Dial2Goal);
@@ -404,18 +416,17 @@ public class NumericalNightmare : MonoBehaviour
     void PinsToPress()
     {
         int faultySymbolValue = SymbolDictionary.ContainsKey(FaultySymbol) ? SymbolDictionary[FaultySymbol] : 0;
-        int startNumber = LastAndCurrentFaultyStage + faultySymbolValue;
 
-        for (int repeat = 0; repeat < 3; repeat++)
+        PinList.Add((faultySymbolValue + LastAndCurrentFaultyStage % 20) + 1);
+        if (PinList[0] % 2 == 0)
         {
-            if (startNumber < 0)
-            {
-                continue;
-            }
-            int modnumber = (startNumber % 20 == 0) ? 1 : startNumber % 20;
-            PinList.Add(modnumber);
-            startNumber -= 3;
+            PinList.Add(((PinList[0] * 5) % 20) + 1);
         }
+        else
+        {
+            PinList.Add(((PinList[0] * Bomb.GetBatteryCount()) % 20) + 1);
+        }
+        PinList.Add(Mathf.Abs(PinList[0] - PinList[1]));
 
         Debug.Log("YOUR CORRECT PINS");
         foreach (int pin in PinList)
@@ -517,8 +528,8 @@ public class NumericalNightmare : MonoBehaviour
     {
         if (BuildThisStage == false)
         {
-            FinalInputBuilding();
             GetRandomSymbolsReady();
+            FinalInputBuilding();
             BuildThisStage = true;
         }
 
@@ -544,8 +555,8 @@ public class NumericalNightmare : MonoBehaviour
                     break;
                 case 3:
                     //Only Stage is Faulty
-                    DisplayRandomSymbolsWorking();
                     DisplayAndStoreStageFaulty();
+                    DisplayRandomSymbolsWorking();
                     WireCombination();
                     WiresBroken = true;
                     break;
@@ -556,8 +567,8 @@ public class NumericalNightmare : MonoBehaviour
         }
         else
         {
-            DisplayRandomSymbolsWorking();
             DisplayStageWorking();
+            DisplayRandomSymbolsWorking();
             FaultyProbability *= 2;
             FaultyThisStage = false;
             BuildThisStage = false;
@@ -775,16 +786,27 @@ public class NumericalNightmare : MonoBehaviour
             FinalInputList.RemoveAt(0);
             //NumbersAndDashes(keypad.ToString());
             Displays[0].text = DisplayInput;
+            FinalInputIndex++;
+            Displays[0].text = "";
+            Displays[1].text = "";
+            Displays[2].text = "";
         }
         else if (keypad == -1 && FinalInputList[0] == LastInputNumber)
         {
             FinalInputList.RemoveAt(0);
             //NumbersAndDashes(LastInputNumber.ToString());
             Displays[0].text = DisplayInput;
+            FinalInputIndex++;
+            Displays[0].text = "";
+            Displays[1].text = "";
+            Displays[2].text = "";
         }
         else
         {
             Strike();
+            Displays[0].text = FinalInputIndex.ToString();
+            Displays[1].text = StageSymbolList[FinalInputIndex][0];
+            Displays[2].text = StageSymbolList[FinalInputIndex][1];
         }
 
         if (keypad != -1)
@@ -796,11 +818,11 @@ public class NumericalNightmare : MonoBehaviour
     //Making the Sequence
     void FinalInputBuilding()
     {
-        if (Math.DRoot(Stage) > 5)
+        if (ExMath.IsPrime(Stage))
         {
-            FinalInputList.Add((ThisStageFirstSymbolValue + ThisStageSecondSymbolValue + Stage) % 10);
+            FinalInputList.Add(((ThisStageFirstSymbolValue + ThisStageSecondSymbolValue + Stage) * Bomb.GetBatteryCount()) % 10);
         }
-        else if (Stage % 5 == 0)
+        else if (ExMath.IsSquare(Stage))
         {
             FinalInputList.Add((ThisStageFirstSymbolValue + ThisStageSecondSymbolValue + LastAndCurrentFaultyStage) % 10);
         }
@@ -838,8 +860,8 @@ public class NumericalNightmare : MonoBehaviour
                 CheckFix();
                 Debug.Log("---YOUR DIAL INPUT---");
                 Debug.Log(CurrentDialPositions[0]);
-                Debug.Log(CurrentDialPositions[0]);
-                Debug.Log(CurrentDialPositions[0]);
+                Debug.Log(CurrentDialPositions[1]);
+                Debug.Log(CurrentDialPositions[2]);
 
                 Debug.Log("---YOUR WIRE INPUT--- (First letter then number, letters are shown as numbers as followed A = 1, B = 2, C = 3)");
                 Debug.Log(LastWireABC.ToString() + LastWire123.ToString());
@@ -890,40 +912,6 @@ public class NumericalNightmare : MonoBehaviour
     }
 
 
-    #endregion
-
-    #region Diplaying Final Input
-    /*
-    void CreateDashList()
-    {
-        for (int i = 0; i < FinalInputList.Count; i++)
-        {
-            DashList.Add("- ");
-
-            if ((i + 1) % 3 == 0)
-            {
-                DashList.Add(" ");
-            }
-        }
-
-        DisplayInput = DashList.ToString();
-    }
-
-    void NumbersAndDashes(string input)
-    {
-        if (CurrentDashIndex < DashList.Count)
-        {
-            DashList[CurrentDashIndex] = input + " ";
-            CurrentDashIndex++;
-
-            while (CurrentDashIndex < DashList.Count && DashList[CurrentDashIndex] == " ")
-            {
-                CurrentDashIndex++;
-            }
-        }
-        DisplayInput = DashList.ToString();
-    }
-    */
     #endregion
 
     //Solve and Stuff
