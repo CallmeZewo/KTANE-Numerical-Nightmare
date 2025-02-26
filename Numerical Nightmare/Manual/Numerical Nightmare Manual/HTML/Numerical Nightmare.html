@@ -48,7 +48,7 @@
                         The symbols on the right display update on each solve of a <a href="Location of Non-Ignored Modules">non-ignored module</a>.
                         The current stage is shown on the bottom display.
                     </li>
-                    <li>Each symbol has a designated value, listed in the table below, which is used to calculate the current stage’s number.</li>
+                    <li>Each symbol has a designated value, listed in the table below, which is used to calculate the current stage’s value.</li>
                     <li>When all other non-ignored modules have been solved, the display will turn blank and wait for input.</li>
                     <li>A stage is invalid if one of the following conditions is met:
                         <ul>
@@ -89,15 +89,15 @@
                 <table class="stage-calc">
                     <tr>
                         <td>
-                            <h4>If the stage number is prime number:</h4>
+                            <h4>If the stage number is prime a number:</h4>
                             Multiply the battery count with the sum of the symbol values and stage number.
                         </td>
                     </tr>
                     <tr>
                         <td>
-                            <h4>If the stage number is square number:</h4>
-                            Add the values of both symbols and the last faulty stage number.
-                            If there has been no faulty stage up to this point only use the symbols sum.
+                            <h4>If the stage number is square a number:</h4>
+                            Add the values of both symbols and the last faulty shown stage number.
+                            If the stage has not been faulty up to this point only use the symbols sum.
                         </td>
                     </tr>
                     <tr>
@@ -112,18 +112,18 @@
                 <p>
                     If your module is faulty, open it using the small button on the bottom right of the numpad.
                     This button also serves as the submit button for your fix and will close the module again.
-                    Locate the correct table that corresponds to the issue with the module.
+                    Locate the one correct table that corresponds to the issue with the module.
                 </p>
                 <table class="fixing-module">
                     <thead>
-                        <tr><th>Wires: Only stage display is faulty</th></tr>
+                        <tr><th>Wires: Only stage displayed is faulty</th></tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>
                                 <ul>
                                     <li>Use the alphanumeric position of the first letter in the serial number and add the faulty displayed stage.</li>
-                                    <li>Take this number, apply modulo 3, and add 1 to get the letter position of your Wire connection.</li>
+                                    <li>Take this number, apply modulo 3, and add 1 to get the alphanumerical position of your Wire connection.</li>
                                     <li>Add the 3 Stage numbers preceding this one and multiply it by the faulty displayed stage number.</li>
                                     <li>Take this number, apply modulo 3, and add 1 to get the number position of your Wire connection.</li>
                                 </ul>
@@ -135,7 +135,7 @@
                             <td>
                                 <ul>
                                     <li>Pressing a number and a letter creates a connection between them.</li>
-                                    <li>The fault will be resolved once the correct wire is connected and submitted.</li>
+                                    <li>The fault will be resolved once the correct wire connection is made and submitted.</li>
                                 </ul>
                             </td>
                         </tr>
@@ -152,7 +152,7 @@
             <div class="page-content">
                 <table class="fixing-module">
                     <thead>
-                        <tr><th>Dials: At most one symbol is displayed</th></tr>
+                        <tr><th>Dials: At most one symbol is displayed on a correct stage</th></tr>
                     </thead>
                     <tbody>
                         <tr>
@@ -161,7 +161,7 @@
                                     <li>Use the symbols from the last valid stage and multiply their values.</li>
                                     <li>Apply modulo 8 for the position of the first dial.</li>
                                     <li>Add the symbols value and apply modulo 8 for the second dials position.</li>
-                                    <li>Applying modulo 8 on the product of the battery count and the last faulty shown stage number, gives you the third dials position.</li>
+                                    <li>Applying modulo 8 on the sum of the total indicator count and the last faulty shown stage number, gives you the third dials position.</li>
                                 </ul>
                             </td>
                         </tr>
@@ -171,6 +171,7 @@
                             <td>
                                 <ul>
                                     <li>Pressing a dial will rotate it by 45°.</li>
+                                    <li>The calculated number represents the number of presses for each dial</li>
                                     <li>The fault will be resolved once each dial is in the right position before submitted.</li>
                                 </ul>
                             </td>
@@ -179,14 +180,14 @@
                 </table>
                 <table class="fixing-module">
                     <thead>
-                        <tr><th>Microchip: Stage display is faulty and at most one symbol is displayed</th></tr>
+                        <tr><th>Microchip: Stage displayed is faulty and at most one symbol is displayed</th></tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>
                                 <ul>
-                                    <li>Add the faulty shown stage and the number that you get from the faulty symbol, if there is any.</li>
-                                    <li>Modulo 20 that number, add 1 and press that pin.</li>
+                                    <li>Add the faulty shown stage to the number obtained from the faulty symbol. If no faulty symbol is present, use 0.</li>
+                                    <li>Modulo 20 that number, add 1 and press the pin on that position.</li>
                                     <li>If the first pressed pin is even, multiply the pins position by 5, modulo 20 and add 1 for the second pin.</li>
                                     <li>Otherwise multiply the pins position with the battery count, modulo 20 and add 1 for the second pin.</li>
                                     <li>Take the absolute difference of the two positions for the third pin.</li>
@@ -198,7 +199,7 @@
                         <tr>
                             <td>
                                 <ul>
-                                    <li>The microchip has 20 pins starting on the top most left pin with 1 going clockwise.</li>
+                                    <li>The microchip has 20 pins starting on the top most left pin with 1 and continuing clockwise.</li>
                                     <li>The fault will resolve if you submit after making every necessary input.</li>
                                 </ul>
                             </td>
