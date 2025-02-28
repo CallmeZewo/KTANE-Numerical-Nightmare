@@ -890,6 +890,7 @@ public class NumericalNightmare : MonoBehaviour
             if (ChipBroken) Debug.LogFormat("[Numerical Nightmare #{0}] Your microchip is missing some input(s): {1}", ModuleId, string.Join(", ",PinList.Select(x => x.ToString()).ToArray()));
             if (DialsBroken) Debug.LogFormat("[Numerical Nightmare #{0}] Your dial input {1}, {2}, {3} is incorrect, expected was {4}, {5}, {6}", ModuleId, CurrentDialPositions[0], CurrentDialPositions[1], CurrentDialPositions[2], Dial1Goal, Dial2Goal, Dial3Goal);
             if (WiresBroken) Debug.LogFormat("[Numerical Nightmare #{0}] Your wire connection {1} to {2} is incorrect, expected was {3} to {4}", ModuleId, LastWireABCString, LastWire123, CorrectWireABCString, CorrectWire123);
+            Strike();
         }
     }
 
