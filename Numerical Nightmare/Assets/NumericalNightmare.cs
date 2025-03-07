@@ -114,7 +114,7 @@ public class NumericalNightmare : MonoBehaviour
     static int ModuleIdCounter = 1;
     public int SolvedModCount = 0;
     private bool ModuleSolved;
-    int SolvableModCount = 10;
+    int SolvableModCount = 20;
     int Stage = 0;
     int ModuleId;
 
@@ -387,7 +387,7 @@ public class NumericalNightmare : MonoBehaviour
         Dial2Goal = (LastValidStageFirstSymbolValue + LastValidStageSecondSymbolValue) % 8;
         Dial3Goal = (Bomb.GetIndicators().Count() + LastAndCurrentFaultyStage) % 8;
 
-        Debug.LogFormat("[Numerical Nightmare #{0}] Symbols faulty -> Dial positions:\n1. {1}\n2. {2}\n3. {3}", ModuleId, Dial1Goal, Dial2Goal, Dial3Goal);
+        Debug.LogFormat("[Numerical Nightmare #{0}] Symbols faulty -> Dial positions: | 1. {1} | 2. {2} | 3. {3}", ModuleId, Dial1Goal, Dial2Goal, Dial3Goal);
     }
 
     void MoveDials(int dialIndex)
@@ -419,7 +419,7 @@ public class NumericalNightmare : MonoBehaviour
     {
         int faultySymbolValue = SymbolDictionary.ContainsKey(FaultySymbol) ? SymbolDictionary[FaultySymbol] : 0;
 
-        PinList.Add((faultySymbolValue + LastAndCurrentFaultyStage % 20) + 1);
+        PinList.Add((faultySymbolValue + LastAndCurrentFaultyStage) % 20 + 1);
         if (PinList[0] % 2 == 0)
         {
             PinList.Add(((PinList[0] * 5) % 20) + 1);
@@ -430,7 +430,7 @@ public class NumericalNightmare : MonoBehaviour
         }
         PinList.Add(Mathf.Abs(PinList[0] - PinList[1]));
 
-        Debug.LogFormat("[Numerical Nightmare #{0}] Symbols and stage faulty -> Microchip pins:\n1. {1}\n2. {2}\n3. {3}", ModuleId, PinList[0], PinList[1], PinList[2]);
+        Debug.LogFormat("[Numerical Nightmare #{0}] Symbols and stage faulty -> Microchip pins: | 1. {1} | 2. {2} | 3. {3}", ModuleId, PinList[0], PinList[1], PinList[2]);
     }
 
     void PinPresses(int pinIndex)
@@ -449,7 +449,7 @@ public class NumericalNightmare : MonoBehaviour
         else
         {
             Strike();
-            Debug.LogFormat("[Numerical Nightmare #{0}] Your input {1} for Microchip was incorrect, expected was the pin {}", ModuleId, pinIndex, PinList[0]);
+            Debug.LogFormat("[Numerical Nightmare #{0}] Your input {1} for Microchip was incorrect, expected was the pin {2}", ModuleId, pinIndex, PinList[0]);
         }
 
         if (PinList.Count <= 0)
@@ -465,7 +465,7 @@ public class NumericalNightmare : MonoBehaviour
     void WireCombination()
     {
         //Last 3 stages times faulty stage mod 100
-        CorrectWire123 = ((((Stage - 1) + (Stage - 2) + (Stage - 3)) * LastAndCurrentFaultyStage % 3) + 1);
+        CorrectWire123 = (LastAndCurrentFaultyStage + ((Stage - 1) * (Stage - 1)) + ((Stage - 2) * (Stage - 3))) % 3 + 1;
         CorrectWireABC = (((FirstSerialLetter - 'A' + 1 + LastAndCurrentFaultyStage)) % 3) + 1;
         if (CorrectWireABC == 3)
         {
@@ -480,7 +480,7 @@ public class NumericalNightmare : MonoBehaviour
             CorrectWireABCString = "A";
         }
 
-        Debug.LogFormat("[Numerical Nightmare #{0}] stage faulty -> Wires:\nConnect {1} to {2}", ModuleId, CorrectWireABCString, CorrectWire123);
+        Debug.LogFormat("[Numerical Nightmare #{0}] stage faulty -> Wires: | Connect {1} to {2}", ModuleId, CorrectWireABCString, CorrectWire123);
     }
 
     void SwitchWires()
@@ -566,6 +566,7 @@ public class NumericalNightmare : MonoBehaviour
 
         if (Rnd.Range(0f, 100f) < FaultyProbability && StagesDone > 2 && FaultyThisStage == false)
         {
+            Debug.LogFormat("[Numerical Nightmare #{0}] Stage {1} was faulty. | Faulty stage number: {2} | Faulty symbol values: {3}, {4}", ModuleId, Stage, Displays[0].text, SymbolDictionary.ContainsKey(Displays[1].text) ? SymbolDictionary[Displays[1].text] : 0, SymbolDictionary.ContainsKey(Displays[2].text) ? SymbolDictionary[Displays[2].text] : 0);
             HatchOpen = false;
 
             switch (Rnd.Range(1,4))
@@ -595,7 +596,6 @@ public class NumericalNightmare : MonoBehaviour
 
             FaultyProbability = 3.125f;
             FaultyThisStage = true;
-            Debug.LogFormat("[Numerical Nightmare #{0}] Stage {1} was faulty.\nFaulty stage number: {2}\nFaulty symbol values: {3}, {4}", ModuleId, Stage, Displays[0].text, SymbolDictionary.ContainsKey(Displays[1].text) ? SymbolDictionary[Displays[1].text] : 0, SymbolDictionary.ContainsKey(Displays[2].text) ? SymbolDictionary[Displays[2].text] : 0);
         }
         else
         {
@@ -908,7 +908,7 @@ public class NumericalNightmare : MonoBehaviour
     {
         GetComponent<KMBombModule>().HandleStrike();
     }
-
+    /*
 #pragma warning disable 414
     private readonly string TwitchHelpMessage = @"Use !{0} to do something.";
 #pragma warning restore 414
@@ -922,4 +922,5 @@ public class NumericalNightmare : MonoBehaviour
     {
         yield return null;
     }
+    */
 }
