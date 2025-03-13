@@ -566,7 +566,6 @@ public class NumericalNightmare : MonoBehaviour
 
         if (Rnd.Range(0f, 100f) < FaultyProbability && StagesDone > 2 && FaultyThisStage == false)
         {
-            Debug.LogFormat("[Numerical Nightmare #{0}] Stage {1} was faulty. | Faulty stage number: {2} | Faulty symbol values: {3}, {4}", ModuleId, Stage, Displays[0].text, SymbolDictionary.ContainsKey(Displays[1].text) ? SymbolDictionary[Displays[1].text] : 0, SymbolDictionary.ContainsKey(Displays[2].text) ? SymbolDictionary[Displays[2].text] : 0);
             HatchOpen = false;
 
             switch (Rnd.Range(1,4))
@@ -594,6 +593,7 @@ public class NumericalNightmare : MonoBehaviour
                     break;
             }
 
+            Debug.LogFormat("[Numerical Nightmare #{0}] Stage {1} was faulty. | Faulty stage number: {2} | Faulty symbol values: {3}, {4}", ModuleId, Stage, Displays[0].text, SymbolDictionary.ContainsKey(Displays[1].text) ? SymbolDictionary[Displays[1].text] : 0, SymbolDictionary.ContainsKey(Displays[2].text) ? SymbolDictionary[Displays[2].text] : 0);
             FaultyProbability = 3.125f;
             FaultyThisStage = true;
         }
