@@ -47,12 +47,6 @@ public class NumericalNightmare : MonoBehaviour
         { 7, 315f }
     };
 
-    static Dictionary<int, string> EasterEggSounds = new Dictionary<int, string>
-    {
-        {0, "Lucky!"},
-        {1, "DoubleGolden1UP" },
-    };
-
     //Quaternions for Hatch Movement
     static Quaternion targetQuaternionOpen = Quaternion.Euler(new Vector3(0, -105f, 0));
     static Quaternion targetQuaternionClose = Quaternion.Euler(new Vector3(0, 0f, 0));
@@ -103,7 +97,6 @@ public class NumericalNightmare : MonoBehaviour
 
     List<List<string>> StageSymbolList = new List<List<string>>();
     List<int> CurrentDialPositions = new List<int> { 0, 0, 0 };
-    List<int> EasterEggKeypadList = new List<int>();
     List<int> FinalInputList = new List<int>();
     List<int> PinList = new List<int>();
 
