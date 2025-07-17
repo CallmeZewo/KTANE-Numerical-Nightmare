@@ -421,7 +421,8 @@ public class NumericalNightmare : MonoBehaviour
         {
             PinList.Add(((PinList[0] * Bomb.GetBatteryCount()) % 20) + 1);
         }
-        PinList.Add(Mathf.Abs(PinList[0] - PinList[1]));
+        int pinDif = Mathf.Abs(PinList[0] - PinList[1]);
+        PinList.Add(pinDif == 0 ? 1 : pinDif);
 
         Debug.LogFormat("[Numerical Nightmare #{0}] Symbols and stage faulty -> Microchip pins: | 1. {1} | 2. {2} | 3. {3}", ModuleId, PinList[0], PinList[1], PinList[2]);
     }
