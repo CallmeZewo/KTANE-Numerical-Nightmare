@@ -19,6 +19,6 @@ MonoBehaviour:
     puzzles before continuing. One wrong move, and it strikes back!\n\nThe manual
     can be found in the manuals folder of the game or at ktane.timwi.de.\n\r\ncallme_zero
     on Discord if there are any bugs."
-  version: 1.0.4
+  version: 2.0.0
   outputFolder: build
   previewImage: {fileID: 2800000, guid: 69c08dad078242e478b035b3fca6fa08, type: 3}

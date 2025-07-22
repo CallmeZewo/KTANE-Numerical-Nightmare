@@ -71,7 +71,8 @@ public class NumericalNightmare : MonoBehaviour
     int LastAndCurrentFaultyStage = 0;          //Same goes with the stages
     int ThisStageSecondSymbolValue;             //This is just the current symbol that is gonna get displayed this stage
     int ThisStageFirstSymbolValue;              //not depended on fault
-    int CurrentDashIndex = 0;                   //Keep track where you are in the DashList
+    int totalinputcountones = 0;
+    int totalinputcounttens = 0;
     int FinalInputIndex = 0;                    //Wich stage is being input into final
     int LastInputNumber;                        //Last Inputed number for the final sequence
     int CorrectWire123;                         //Correct wire connection points (1, 2, 3) for current fault stage
@@ -88,7 +89,7 @@ public class NumericalNightmare : MonoBehaviour
     string CorrectWireABCString;
     string LastWireABCString;
     string CurrentActiveWire;
-    string DisplayInput;
+    string FinalInputHolder = "";
     string FaultySymbol;
     string Symbol1Temp;
     string Symbol2Temp;
@@ -341,7 +342,7 @@ public class NumericalNightmare : MonoBehaviour
                 FaultySymbol = Displays[1].text;
                 break;
             case 3:
-                //Both SecondSymbol
+                //Only Second Symbol
                 Displays[1].text = "";
                 Displays[2].text = SymbolDictionary.Keys.PickRandom();
                 FaultySymbol = Displays[2].text;
@@ -368,6 +369,44 @@ public class NumericalNightmare : MonoBehaviour
         }
         Displays[0].text = displayTemp.ToString();
         LastAndCurrentFaultyStage = displayTemp;
+    }
+
+    void HandleDisplayOnFinalInput(string input)
+    {
+        Displays[0].characterSize = 0.0029f;
+        FinalInputHolder += input;
+        if (FinalInputHolder.Count() > 12)
+        {
+            string temp = "";
+            for (int i = 1; i < 13; i++)
+            {
+                temp += FinalInputHolder[i];
+            }
+            FinalInputHolder = temp;
+        }
+        string formattedstring = "";
+        int index = 0;
+        foreach (char c in FinalInputHolder)
+        {
+            if (index % 3 == 0 && index != 12 && index > 0)
+            {
+                formattedstring += " ";
+            }
+            index++;
+            formattedstring += c;
+        }
+
+        FinalInputList.RemoveAt(0);
+        FinalInputIndex++;
+        Displays[0].text = formattedstring;
+        Displays[1].text = totalinputcountones.ToString();
+        Displays[2].text = totalinputcounttens.ToString();
+        totalinputcountones++;
+        if (totalinputcountones > 9)
+        {
+            totalinputcountones = 0;
+            totalinputcounttens++;
+        }
     }
 
     #endregion
@@ -796,24 +835,16 @@ public class NumericalNightmare : MonoBehaviour
 
         if (keypad == FinalInputList[0] && keypad != LastInputNumber)
         {
-            FinalInputList.RemoveAt(0);
-            Displays[0].text = DisplayInput;
-            FinalInputIndex++;
-            Displays[0].text = "";
-            Displays[1].text = "";
-            Displays[2].text = "";
+            HandleDisplayOnFinalInput(FinalInputList[0].ToString());
         }
         else if (keypad == -1 && FinalInputList[0] == LastInputNumber)
         {
-            FinalInputList.RemoveAt(0);
-            Displays[0].text = DisplayInput;
-            FinalInputIndex++;
-            Displays[0].text = "";
-            Displays[1].text = "";
-            Displays[2].text = "";
+            HandleDisplayOnFinalInput(FinalInputList[0].ToString());
+            LastInputNumber = keypad;
         }
         else
         {
+            Displays[0].characterSize = 0.005f;
             Strike();
             Displays[0].text = FinalInputIndex.ToString();
             Displays[1].text = StageSymbolList[FinalInputIndex][0];
@@ -821,6 +852,7 @@ public class NumericalNightmare : MonoBehaviour
             string debugKeypad = keypad == -1 ? "Skip" : keypad.ToString();
             string debugKeypadCorrect = FinalInputList[0] == LastInputNumber ? "Skip" : FinalInputList[0].ToString();
             Debug.LogFormat("[Numerical Nightmare #{0}] Your input {1} was incorrect, expected was {2}", ModuleId, debugKeypad, debugKeypadCorrect);
+            return;
         }
 
         if (keypad != -1)
@@ -895,6 +927,10 @@ public class NumericalNightmare : MonoBehaviour
     void Solve()
     {
         ModuleSolved = true;
+        Displays[0].characterSize = 0.004f;
+        Displays[0].text = "WELL DONE!";
+        Displays[1].text = "";
+        Displays[2].text = "";
         GetComponent<KMBombModule>().HandlePass();
     }
 
