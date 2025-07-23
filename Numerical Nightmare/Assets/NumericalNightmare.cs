@@ -108,7 +108,7 @@ public class NumericalNightmare : MonoBehaviour
     static int ModuleIdCounter = 1;
     public int SolvedModCount = 0;
     private bool ModuleSolved;
-    int SolvableModCount = 20;
+    int SolvableModCount = 1000;
     int Stage = 0;
     int ModuleId;
 
@@ -724,64 +724,26 @@ public class NumericalNightmare : MonoBehaviour
                         ToggleHatch();
                         break;
                     case 12:
-                        PinPresses(1);
-                        break;
                     case 13:
-                        PinPresses(2);
-                        break;
                     case 14:
-                        PinPresses(3);
-                        break;
                     case 15:
-                        PinPresses(4);
-                        break;
                     case 16:
-                        PinPresses(5);
-                        break;
                     case 17:
-                        PinPresses(6);
-                        break;
                     case 18:
-                        PinPresses(7);
-                        break;
                     case 19:
-                        PinPresses(8);
-                        break;
                     case 20:
-                        PinPresses(9);
-                        break;
                     case 21:
-                        PinPresses(10);
-                        break;
                     case 22:
-                        PinPresses(11);
-                        break;
                     case 23:
-                        PinPresses(12);
-                        break;
                     case 24:
-                        PinPresses(13);
-                        break;
                     case 25:
-                        PinPresses(14);
-                        break;
                     case 26:
-                        PinPresses(15);
-                        break;
                     case 27:
-                        PinPresses(16);
-                        break;
                     case 28:
-                        PinPresses(17);
-                        break;
                     case 29:
-                        PinPresses(18);
-                        break;
                     case 30:
-                        PinPresses(19);
-                        break;
                     case 31:
-                        PinPresses(20);
+                        PinPresses(i - 11);
                         break;
                     case 32:
                         MoveDials(0);
@@ -927,8 +889,8 @@ public class NumericalNightmare : MonoBehaviour
     void Solve()
     {
         ModuleSolved = true;
-        Displays[0].characterSize = 0.004f;
-        Displays[0].text = "WELL DONE!";
+        Displays[0].characterSize = 0.0036f;
+        Displays[0].text = "GOOD NIGHT!";
         Displays[1].text = "";
         Displays[2].text = "";
         GetComponent<KMBombModule>().HandlePass();
@@ -936,21 +898,211 @@ public class NumericalNightmare : MonoBehaviour
 
     void Strike()
     {
+        if (HatchOpen == true)
+        {
+            HatchOpen = false;
+        }
+        ResetInside();
+
         GetComponent<KMBombModule>().HandleStrike();
     }
-    /*
+
 #pragma warning disable 414
-    private readonly string TwitchHelpMessage = @"Use !{0} to do something.";
+    private readonly string TwitchHelpMessage = @"Use !{0} press 834S45S.. for the sequence input on the keypad, 'S' for skip | !{0} dials [Pos 1] [Pos 2] [Pos 3] | !{0} wire [A/B/C] [1/2/3] | !{0} microchip/mc [Pin 1] [Pin 2] [Pin 3]";
 #pragma warning restore 414
 
-    IEnumerator ProcessTwitchCommand(string Command)
+    IEnumerator ProcessTwitchCommand(string command)
     {
+        string[] split = command.ToUpperInvariant().Split(new[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+
         yield return null;
+
+        if ("PRESS".ContainsIgnoreCase(split[0]))
+        {
+            if (split.Length < 2)
+            {
+                yield return "sendtochaterror This command is to short!";
+                yield break;
+            }
+
+            var validNumberInputs = new[] { '0', '1', '2', '3', '4', '5', '6', '7', '8' ,'9', 'S' };
+
+            char[] numberSplit = string.Concat(split.Skip(1).ToArray()).ToCharArray();
+
+            if (!numberSplit.All(validNumberInputs.Contains))
+            {
+                yield return $"sendtochaterror {numberSplit.Where(x => !validNumberInputs.Contains(x)).Join(", ")} is/are invalid!";
+                yield break;
+            }
+
+            var setupNumbers = numberSplit.Select(x => Array.IndexOf(validNumberInputs, x)).ToArray();
+
+            foreach (int number in setupNumbers)
+            {
+                PressHandler(Buttons[number]);
+                yield return new WaitForSeconds(.05f);
+            }
+        }
+
+        if ("DIALS".Contains(split[0]))
+        {
+            if (split.Length < 4)
+            {
+                yield return "sendtochaterror Make sure to input a position for all three dials!";
+                yield break;
+            }
+            else if (split.Length > 4)
+            {
+                yield return "sendtochaterror You only need to input the position of three dials!";
+                yield break;
+            }
+
+            var validDialInputs = new[] { '0', '1', '2', '3', '4', '5', '6', '7' };
+
+            char[] dialSplit = string.Concat(split.Skip(1).ToArray()).ToCharArray();
+
+            if (!dialSplit.All(validDialInputs.Contains))
+            {
+                yield return $"sendtochaterror {dialSplit.Where(x => !validDialInputs.Contains(x)).Join(", ")} is/are invalid!";
+                yield break;
+            }
+
+            var setupDials = dialSplit.Select(x => Array.IndexOf(validDialInputs, x)).ToArray();
+
+            int dialIndex = 32;
+
+            ToggleHatch();
+
+            yield return new WaitForSeconds(.3f);
+
+            foreach (int dialPos in setupDials)
+            {
+                for (int i = dialPos; i > 0; i--)
+                {
+                    Debug.Log(i);
+                    PressHandler(Buttons[dialIndex]);
+                    yield return new WaitForSeconds(.05f);
+                }
+                dialIndex++;
+            }
+
+            ToggleHatch();
+        }
+
+        if ("WIRE".Contains(split[0]))
+        {
+            if (split.Length < 2)
+            {
+                yield return "sendtochaterror Make sure to input an alphabetic and a numeral position for the wire connection!";
+                yield break;
+            }
+            else if (split.Length > 3)
+            {
+                yield return "sendtochaterror You only need two inputs for the wire connection!";
+                yield break;
+            }
+
+            var validWireInputs = new[] { 'A', 'B', 'C', '1', '2', '3' };
+
+            char[] wireSplit = string.Concat(split.Skip(1).ToArray()).ToCharArray();
+
+            if (!wireSplit.All(validWireInputs.Contains))
+            {
+                yield return $"sendtochaterror {wireSplit.Where(x => !validWireInputs.Contains(x)).Join(", ")} is/are invalid!";
+                yield break;
+            }
+
+            var setupWire = wireSplit.Select(x => Array.IndexOf(validWireInputs, x)).ToArray();
+
+            if (setupWire.Length > 2)
+            {
+                yield return "sendtochaterror There is to many inputs for the wire connection!";
+                yield break;
+            }
+
+            if (setupWire[0] < 3 && setupWire[1] < 3)
+            {
+                yield return "sendtochaterror There is no numerical input for the wire connection!";
+                yield break;
+            }
+
+            if (setupWire[0] > 3 && setupWire[1] > 3)
+            {
+                yield return "sendtochaterror There is no alphabetical input for the wire connection!";
+                yield break;
+            }
+
+            ToggleHatch();
+
+            yield return new WaitForSeconds(.3f);
+            PressHandler(Buttons[35 + setupWire[0]]);
+            yield return new WaitForSeconds(.1f);
+            PressHandler(Buttons[38 + setupWire[1] - 3]);
+            yield return new WaitForSeconds(.1f);
+            ToggleHatch();
+        }
+
+        if ("MICROCHIP".Contains(split[0]) || "MC".Contains(split[0]))
+        {
+            if (split.Length < 4)
+            {
+                yield return "sendtochaterror Make sure to input all three pins!";
+                yield break;
+            }
+            else if (split.Length > 4)
+            {
+                yield return "sendtochaterror You only need to input three pins!";
+                yield break;
+            }
+
+            var validChipInputs = new[] { "1", "2", "3", "4", "5", "6", "7", "8", "9", "10",
+                                          "11", "12", "13", "14", "15", "16", "17", "18", "19", "20" };
+
+            string[] splitChip = split.Skip(1).ToArray();
+
+            foreach (string pinString in splitChip)
+            {
+                int pinIndex = int.Parse(pinString);
+                if (pinIndex > 20 || pinIndex < 0)
+                {
+                    yield return "sendtochaterror Check your inputs again, one of them is out of range ( 1 - 20 )!";
+                    yield break;
+                }
+            }
+
+            ToggleHatch();
+
+            yield return new WaitForSeconds(.3f);
+
+            foreach (string pinInput in splitChip)
+            {
+                PressHandler(Buttons[int.Parse(pinInput) + 11]);
+                yield return new WaitForSeconds(.1f);
+            }
+
+            ToggleHatch();
+        }
     }
 
     IEnumerator TwitchHandleForcedSolve()
     {
-        yield return null;
+        while (!FinalInput)
+        {
+            yield return true;
+        }
+        yield return new WaitForSeconds(0.1f);
+        while (!ModuleSolved)
+        {
+            if (FinalInputList[0] != LastInputNumber)
+            {
+                PressHandler(Buttons[FinalInputList[0]]);
+            }
+            else
+            {
+                PressHandler(Buttons[10]);
+            }
+            yield return new WaitForSeconds(0.1f);
+        }
+        
     }
-    */
 }
