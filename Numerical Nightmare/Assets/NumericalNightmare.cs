@@ -108,7 +108,7 @@ public class NumericalNightmare : MonoBehaviour
     static int ModuleIdCounter = 1;
     public int SolvedModCount = 0;
     private bool ModuleSolved;
-    int SolvableModCount = 1000;
+    int SolvableModCount = 15;
     int Stage = 0;
     int ModuleId;
 
@@ -601,7 +601,7 @@ public class NumericalNightmare : MonoBehaviour
         {
             HatchOpen = false;
 
-            switch (Rnd.Range(1,4))
+            switch (Rnd.Range(1, 4))
             {
                 case 1:
                     //Symbols and Stage are Faulty
@@ -637,7 +637,7 @@ public class NumericalNightmare : MonoBehaviour
             FaultyProbability *= 2;
             FaultyThisStage = false;
             BuildThisStage = false;
-            Debug.LogFormat("[Numerical Nightmare #{0}] Stage {1} valid symbol values: {2}, {3}", ModuleId, Stage, ThisStageFirstSymbolValue, ThisStageSecondSymbolValue);
+            Debug.LogFormat("[Numerical Nightmare #{0}] Stage {1} valid symbol values: {2}, {3}. Calculated value for final input: {4}", ModuleId, Stage, ThisStageFirstSymbolValue, ThisStageSecondSymbolValue, FinalInputList.Last());
         }
 
     }
